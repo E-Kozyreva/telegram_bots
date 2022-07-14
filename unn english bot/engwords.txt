@@ -177,7 +177,6 @@ kindle
 pursue
 snake
 blink
-dick
 lone
 mount
 security
