@@ -12,13 +12,13 @@ words_list = words.split("\n")
 # GENERATE RANDOM WORDS
 def get_random_word():
     random_words = random.choices(words_list, k=4)
-    word = random.choice(random_words)
+    word = random.choice(random_words).lower()
     return random_words, word
 
 
 # TRANSLATE WORDS
 def translation(words, word):
-    r_answer = GoogleTranslator(source='en', target='ru').translate(word)
+    r_answer = GoogleTranslator(source='en', target='ru').translate(word).lower()
     w1 = GoogleTranslator(source='en', target='ru').translate(words[0]).lower()
     w2 = GoogleTranslator(source='en', target='ru').translate(words[1]).lower()
     w3 = GoogleTranslator(source='en', target='ru').translate(words[2]).lower()
@@ -37,7 +37,7 @@ def start(message):
     btn1 = types.KeyboardButton("Поздороваться 👋")
     btn2 = types.KeyboardButton("Задать вопрос ❓")
     markup.add(btn1, btn2)
-    msg = bot.send_message(message.chat.id, text="Привет, {0.first_name}! Я бот для изучения английского языка!".format(message.from_user), reply_markup=markup)
+    msg = bot.send_message(message.chat.id, text="Привет, {0.first_name}! Я бот для изучения английского языка! 👩‍💻".format(message.from_user), reply_markup=markup)
     bot.register_next_step_handler(msg, t_functions)
 
 
@@ -51,7 +51,7 @@ def t_functions(message):
         msg = bot.send_message(message.chat.id, text="Привет! Давай учить новые слова 😊", reply_markup=markup)
         bot.register_next_step_handler(msg, t_translation)
     elif(message.text == "Задать вопрос ❓"):
-        bot.send_message(message.chat.id, "По всем вопросам обращайся к @kozyreva_k1")
+        bot.send_message(message.chat.id, "По всем вопросам обращайся к @kozyreva_k1 🙃")
     else:
         bot.send_message(message.chat.id, "Я тебя не понимаю, напиши /start ✌️")
 
@@ -72,7 +72,7 @@ def t_translation(message):
         trn3 = types.KeyboardButton(translation_list[2])
         trn4 = types.KeyboardButton(translation_list[3])
         markup.add(trn1, trn2, trn3, trn4)
-        msg = bot.send_message(message.chat.id, text="Выбери перевод слова << {0} >>".format(word), reply_markup=markup)
+        msg = bot.send_message(message.chat.id, text="Как переводится слово «{0}» 🧐".format(word), reply_markup=markup)
         bot.register_next_step_handler(msg, t_checking)
     elif (answer == "Стоп 🚫"):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -86,7 +86,7 @@ def t_translation(message):
 # CHECK USER ANSWER
 def t_checking(message):
     if (message.text == r_answer):
-        bot.send_message(message.chat.id, "Верно, молодец!")
+        bot.send_message(message.chat.id, "Верно, молодец! ❤️")
 
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         repeat = types.KeyboardButton("Ещё 🙂")
@@ -96,7 +96,7 @@ def t_checking(message):
         msg = bot.send_message(message.chat.id, text="Ещё? 🙃", reply_markup=markup)
         bot.register_next_step_handler(msg, t_translation)
     elif (message.text != r_answer):
-        bot.send_message(message.chat.id, "Неверно, слово << {0} >> переводится как << {1} >>".format(word, r_answer))
+        bot.send_message(message.chat.id, "Неверно, слово «{0}» переводится как «{1}» 😶‍🌫️".format(word, r_answer))
 
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         repeat = types.KeyboardButton("Ещё 🙂")
