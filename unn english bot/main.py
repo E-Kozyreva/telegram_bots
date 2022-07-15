@@ -1,32 +1,7 @@
-from tkinter.tix import Select
-from deep_translator import GoogleTranslator
-import random
 import telebot
 import data
+import functional
 from telebot import types
-
-# OPEN FILE
-f = open("engwords.txt", "r")
-words = f.read()
-words_list = words.split("\n")
-
-# GENERATE RANDOM WORDS
-def get_random_word():
-    random_words = random.choices(words_list, k=4)
-    word = random.choice(random_words).lower()
-    return random_words, word
-
-
-# TRANSLATE WORDS
-def translation(words, word):
-    r_answer = GoogleTranslator(source='en', target='ru').translate(word).lower()
-    w1 = GoogleTranslator(source='en', target='ru').translate(words[0]).lower()
-    w2 = GoogleTranslator(source='en', target='ru').translate(words[1]).lower()
-    w3 = GoogleTranslator(source='en', target='ru').translate(words[2]).lower()
-    w4 = GoogleTranslator(source='en', target='ru').translate(words[3]).lower()
-    translation_list = [w1, w2, w3, w4]
-    return r_answer, translation_list
-
 
 # TOKEN
 bot = telebot.TeleBot("5431463396:AAGpCBdMOJ0ZoLhY2rZFjKyvnQOUrGrOBF4");
@@ -64,12 +39,12 @@ def t_translation(message):
         global random_words, word
         global r_answer, translation_list
 
-        random_words, word = get_random_word()
+        random_words, word = functional.get_random_word()
 
         u_id = message.from_user.id
 
         data.user_data[u_id] = [random_words, word]
-        r_answer, translation_list = translation(data.user_data[u_id][0], data.user_data[u_id][1])
+        r_answer, translation_list = functional.translation(data.user_data[u_id][0], data.user_data[u_id][1])
         data.user_answer[u_id] = [translation_list, r_answer]
 
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
