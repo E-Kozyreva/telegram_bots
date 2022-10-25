@@ -9,7 +9,7 @@ def get_random_word():
     t_word = verbs.third[index]
 
     random_words = random.sample([f_word, s_word, t_word], 3)
-    return [random_words, index]
+    return random_words, index
 
 
 def get_random_translation(index):
