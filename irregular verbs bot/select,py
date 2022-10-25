@@ -1,0 +1,20 @@
+import verbs
+import random
+
+
+def get_random_word():
+    f_word = random.choice(verbs.first)
+    index = verbs.first.index(f_word)
+    s_word = verbs.second[index]
+    t_word = verbs.third[index]
+
+    random_words = random.sample([f_word, s_word, t_word], 3)
+    return [random_words, index]
+
+
+def get_random_translation(index):
+    r_translation = verbs.translate[index]
+    f_translation = random.choice(verbs.translate)
+    S_translation = random.choice(verbs.translate)
+    t_translation = random.choice(verbs.translate)
+    return [r_translation, f_translation, S_translation, t_translation]
