@@ -8,7 +8,7 @@ from telebot import types
 
 
 # TOKEN
-bot = telebot.TeleBot("5662650914:AAEG7-EHZ_2fuaaUa5Li2J8N_3kzDDw1lwE");
+bot = telebot.TeleBot("5662650914:AAEG7-EHZ_2fuaaUa5Li2J8N_3kzDDw1...");
 
 
 # START
