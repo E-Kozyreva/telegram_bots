@@ -1,15 +1,11 @@
-from tkinter.tix import Select
 from deep_translator import GoogleTranslator
 import random
+import words
 
-# OPEN FILE
-f = open("engwords.txt", "r")
-words = f.read()
-words_list = words.split("\n")
 
 # GENERATE RANDOM WORDS
 def get_random_word():
-    random_words = random.choices(words_list, k=4)
+    random_words = random.choices(words.words_list, k=4)
     word = random.choice(random_words).lower()
     return random_words, word
 
@@ -23,4 +19,3 @@ def translation(words, word):
     w4 = GoogleTranslator(source='en', target='ru').translate(words[3]).lower()
     translation_list = [w1, w2, w3, w4]
     return r_answer, translation_list
-
