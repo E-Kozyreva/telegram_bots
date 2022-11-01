@@ -5,10 +5,11 @@ import buttons
 import information
 import telebot
 from telebot import types
+import random
 
 
 # TOKEN
-bot = telebot.TeleBot("5662650914:AAEG7-EHZ_2fuaaUa5Li2J8N_3kzDDw1...");
+bot = telebot.TeleBot("5662650914:AAEG7-EHZ_2fuaaUa5Li2J8N_3kzDDw1lwE");
 
 
 # START
@@ -37,7 +38,7 @@ def t_irregular_verbs(message):
 
     if (answer == "Давай 👀" or answer == "Ещё 🙂"):
         random_words, index = selection.get_random_word()
-        random_translation = selection.get_random_translation(index)
+        random_translation = random.sample(selection.get_random_translation(index), k=4)
 
         msg = bot.send_message(message.from_user.id, text="Поставь слова в правильном порядке 🧐", reply_markup=buttons.new_verbs(random_words))
         bot.register_next_step_handler(msg, t_checking_1)
