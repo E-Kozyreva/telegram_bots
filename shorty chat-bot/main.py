@@ -5,7 +5,7 @@ import buttons
 
 
 # TOKEN
-bot = telebot.TeleBot("5634218236:AAE5ECZb4LXJE75AGEpOuSLT9GRtwrcc...");
+bot = telebot.TeleBot("5634218236:AAE5ECZb4LXJE75AGEpOuSLT9GRtwrccEE8");
 url = "https://api.telegram.org/bot"
 
 
@@ -25,7 +25,7 @@ def t_get_book(message):
 def t_send_book(message):
     answer = message.text
     if answer in books.book:
-        pdf = open(f'{answer}.pdf', 'rb')
+        pdf = open(f'files/{answer}.pdf', 'rb')
         bot.send_document(message.chat.id, pdf)
         pdf.close()
     else:
