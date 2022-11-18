@@ -3,49 +3,50 @@ import wikipedia
 from random import randint
 from newspaper import Article
 
+
+import buttons
+import random_article
+
+
 # TOKEN
 bot = telebot.TeleBot("5058628758:AAGZabz49Yi-f6RRYeEm3_l6iwGBfKEi9ac");
+
 
 # LANGUAGE
 language = "ru"
 wikipedia.set_lang(language)
 
-# BUTTONS
-keyboard1 = telebot.types.ReplyKeyboardMarkup(True)
-keyboard1.row("Привет 👋🏻")
-keyboard2 = telebot.types.ReplyKeyboardMarkup(True, True)
-keyboard2.row("Найти статью в Wikipedia 🔍", "Случайная статья 🤔")
-keyboard3 = telebot.types.ReplyKeyboardMarkup(True, True)
-keyboard3.row("Да ✅", "Нет ❌")
 
 # START
 @bot.message_handler(content_types=["text"])
 def start(message):
     answer = message.text
-    if answer == "Привет 👋🏻" or answer == "Привет" or answer == "привет":
+    if answer == "Привет 👋🏻" or answer == "/start":
         text = "Привет, выбери что-нибудь для себя 😉"
-        msg = bot.send_message(message.from_user.id, text , reply_markup = keyboard2)
+        msg = bot.send_message(message.from_user.id, text , reply_markup = buttons.get_article())
         bot.register_next_step_handler(msg, functions)
     elif answer == "/help":
-        msg = bot.send_message(message.from_user.id, "Нажми на кнопку 👀" , reply_markup = keyboard1)
+        msg = bot.send_message(message.from_user.id, "Нажми на кнопку 👀" , reply_markup = buttons.get_hi())
         bot.register_next_step_handler(msg, start)
     else:
         msg = bot.send_message(message.from_user.id, "Я тебя не понимаю 😔\nНапиши /help")
         bot.register_next_step_handler(msg, start)
+
 
 # RESTART BOT FUNCTIONS
 def restart(message):
     answer = message.text
     if answer == "Да ✅":
         text = "Рада, что ты хочешь ещё что-нибудь найти 😉"
-        msg = bot.send_message(message.from_user.id, text , reply_markup = keyboard2)
+        msg = bot.send_message(message.from_user.id, text , reply_markup = buttons.get_article())
         bot.register_next_step_handler(msg, functions)
     elif answer == "Нет ❌":
-        msg = bot.send_message(message.from_user.id, "Жаль, была рада помочь, пока 🙂")
+        msg = bot.send_message(message.from_user.id, "Жаль, была рада помочь, пока 🙂", reply_markup = buttons.get_hi())
         bot.register_next_step_handler(msg, start)
     else:
         msg = bot.send_message(message.from_user.id, "Немного тебя не поняла, выбери что-то одно 😔")
         bot.register_next_step_handler(msg, restart)
+
 
 # FUNCTIONS
 def functions(message):
@@ -56,29 +57,15 @@ def functions(message):
         bot.register_next_step_handler(msg , user_word)
     elif answer == "Случайная статья 🤔":
         bot.send_message(message.from_user.id, "Сейчас что-нибудь найдём для тебя интересненькое 🙃")
-        url ="https://ru.wikipedia.org/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:%D0%A1%D0%BB%D1%83%D1%87%D0%B0%D0%B9%D0%BD%D0%B0%D1%8F_%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%B8%D1%86%D0%B0"
-        article = Article(url)
-        article.download()
-        article.parse()
-        title_of_article = str(article.title)[:-11]
-
-        python_page = wikipedia.page(title_of_article)
-
-        page_url = python_page.url
-        original_page_title = python_page.original_title
-        page_summary = str(python_page.summary)
-
-        text = '''📰 {0}\n\n{1}\n\n🌐 '''.format(original_page_title, page_summary)
-        text += page_url
-
-        bot.send_message(message.from_user.id, text)
+        bot.send_message(message.from_user.id, random_article.get_random_article())
 
         text = "Давай ещё что-нибудь узнаем? 😇"
-        msg = bot.send_message(message.from_user.id, text , reply_markup = keyboard3)
+        msg = bot.send_message(message.from_user.id, text , reply_markup = buttons.get_new_function())
         bot.register_next_step_handler(msg, restart)
     else:
-        msg = bot.send_message(message.from_user.id, "Немного тебя не поняла, выбери что-то одно 😔")
+        msg = bot.send_message(message.from_user.id, "Немного тебя не поняла, выбери что-то одно 😔", reply_markup = buttons.get_article())
         bot.register_next_step_handler(msg, functions)
+
 
 # FIND STATE FOR USER
 def user_word(message):
@@ -115,6 +102,7 @@ def user_word(message):
         msg = bot.send_message(message.from_user.id, "Отправь мне номер статьи, которую хочешь прочитать 🙃")
         bot.register_next_step_handler(msg, find_article_2)
 
+
 # FOR THE FIRST CONDITION
 def find_article_1(message):
     article_number = message.text
@@ -147,6 +135,7 @@ def find_article_1(message):
     text = "Давай ещё что-нибудь узнаем? 😇"
     msg = bot.send_message(message.from_user.id, text , reply_markup = keyboard3)
     bot.register_next_step_handler(msg, restart)
+
 
 # FOR THE SECOND CONDITION
 def find_article_2(message):
@@ -181,5 +170,6 @@ def find_article_2(message):
     text = "Давай ещё что-нибудь узнаем? 😇"
     msg = bot.send_message(message.from_user.id, text , reply_markup = keyboard3)
     bot.register_next_step_handler(msg, restart)
+
 
 bot.polling(none_stop=True, interval=0)
