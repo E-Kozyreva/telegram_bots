@@ -3,7 +3,7 @@ import wikipedia
 from random import randint
 from newspaper import Article
 
-
+import data
 import buttons
 import random_article
 import get_article
@@ -26,11 +26,8 @@ def start(message):
         text = "Привет, выбери что-нибудь для себя 😉"
         msg = bot.send_message(message.from_user.id, text , reply_markup = buttons.get_article())
         bot.register_next_step_handler(msg, functions)
-    elif answer == "/help":
-        msg = bot.send_message(message.from_user.id, "Нажми на кнопку 👀" , reply_markup = buttons.get_hi())
-        bot.register_next_step_handler(msg, start)
     else:
-        msg = bot.send_message(message.from_user.id, "Я тебя не понимаю 😔\nНапиши /help")
+        msg = bot.send_message(message.from_user.id, "Нажми на кнопку 👀" , reply_markup = buttons.get_hi())
         bot.register_next_step_handler(msg, start)
 
 
@@ -45,7 +42,7 @@ def restart(message):
         msg = bot.send_message(message.from_user.id, "Жаль, была рада помочь, пока 🙂", reply_markup = buttons.get_hi())
         bot.register_next_step_handler(msg, start)
     else:
-        msg = bot.send_message(message.from_user.id, "Немного тебя не поняла, выбери что-то одно 😔")
+        msg = bot.send_message(message.from_user.id, "Немного тебя не поняла, выбери что-то одно 😔", reply_markup = buttons.get_new_function())
         bot.register_next_step_handler(msg, restart)
 
 
@@ -73,89 +70,23 @@ def user_word(message):
     generalizing_word_of_user = message.text
     generalizing_word = wikipedia.suggest(generalizing_word_of_user)
 
-    if generalizing_word is not None:
-        global possible_articles_1
-        word = "Может ты хотел/ла найти {0}? 🤔".format(generalizing_word)
-        bot.send_message(message.from_user.id, word)
-
-        bot.send_message(message.from_user.id, get_article.get_word_is_not_none(generalizing_word))
-        msg = bot.send_message(message.from_user.id, "Отправь мне номер статьи, которую хочешь прочитать 🙃")
-        bot.register_next_step_handler(msg, find_article_1)
+    if generalizing_word != None:
+        msg = bot.send_message(message.from_user.id, "Такой статьи к сожалению нет, давай найдём что-нибудь другое 🥺", reply_markup = buttons.get_article())
+        bot.register_next_step_handler(msg, functions)
     else:
-        global possible_articles_2
+        text = "Смогла найти такие статьи, выбери одну из них 👀\n"
+        bot.send_message(message.from_user.id, text + get_article.get_articles(message.from_user.id, generalizing_word_of_user))
+        msg = bot.send_message(message.from_user.id, "Отправь мне номер статьи, которую хочешь прочитать 😄")
+        bot.register_next_step_handler(msg, user_article)
 
-        bot.send_message(message.from_user.id, get_article.get_word_is_none(generalizing_word))
-        msg = bot.send_message(message.from_user.id, "Отправь мне номер статьи, которую хочешь прочитать 🙃")
-        bot.register_next_step_handler(msg, find_article_2)
 
-
-# FOR THE FIRST CONDITION
-def find_article_1(message):
-    article_number = message.text
-
-    if int(article_number) in list(range(1, 10_000)):
-        python_page = wikipedia.page(possible_articles_1[int(article_number) - 1])
-
-        page_url = python_page.url
-        original_page_title = python_page.original_title
-        page_summary = str(python_page.summary)
-
-        text = '''📰 {0}\n\n{1}\n\n🌐 '''.format(original_page_title, page_summary)
-        text += page_url
-
-        bot.send_message(message.from_user.id, text)
+def user_article(message):
+    answer = int(message.text)
+    if 0 < answer <= len(data.user_search[message.from_user.id]):
+        bot.send_message(message.from_user.id, data.user_search[message.from_user.id][answer - 1])
     else:
-        bot.send_message(message.from_user.id, "Ты не ввёл/ла номер статьи, поэтому я выберу её за тебя 👿")
-        article = randint(1, len(possible_articles_1))
-        python_page = wikipedia.page(possible_articles_1[article])
-
-        page_url = python_page.url
-        original_page_title = python_page.original_title
-        page_summary = str(python_page.summary)
-
-        text = '''📰 {0}\n\n{1}\n\n🌐 '''.format(original_page_title, page_summary)
-        text += page_url
-
-        bot.send_message(message.from_user.id, text)
-
-    text = "Давай ещё что-нибудь узнаем? 😇"
-    msg = bot.send_message(message.from_user.id, text , reply_markup = keyboard3)
-    bot.register_next_step_handler(msg, restart)
-
-
-# FOR THE SECOND CONDITION
-def find_article_2(message):
-    article_number = message.text
-
-    if int(article_number) in list(range(1, 10_000)):
-        python_page = wikipedia.page(possible_articles_2[int(article_number) - 1])
-
-        page_url = python_page.url
-        original_page_title = python_page.original_title
-        page_summary = str(python_page.summary)
-
-        text = '''📰 {0}\n\n{1}\n\n🌐 '''.format(original_page_title, page_summary)
-        text += page_url
-
-        bot.send_message(message.from_user.id, text)
-    else:
-        bot.send_message(message.from_user.id, "Ты не ввёл/ла номер статьи, поэтому я выберу её за тебя 👿")
-        article = randint(1, len(possible_articles_2))
-        python_page = wikipedia.page(possible_articles_2[article])
-
-        page_url = python_page.url
-        original_page_title = python_page.original_title
-        page_summary = str(python_page.summary)
-
-        text = '''📰 {0}\n\n{1}\n\n🌐 '''.format(original_page_title, page_summary)
-        text += page_url
-
-        bot.send_message(message.from_user.id, text)
-
-
-    text = "Давай ещё что-нибудь узнаем? 😇"
-    msg = bot.send_message(message.from_user.id, text , reply_markup = keyboard3)
-    bot.register_next_step_handler(msg, restart)
+        msg = bot.send_message(message.from_user.id, "Попробуй снова ☹️")
+        bot.register_next_step_handler(msg, user_article)
 
 
 bot.polling(none_stop=True, interval=0)
