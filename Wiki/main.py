@@ -6,6 +6,7 @@ from newspaper import Article
 
 import buttons
 import random_article
+import get_article
 
 
 # TOKEN
@@ -77,28 +78,13 @@ def user_word(message):
         word = "Может ты хотел/ла найти {0}? 🤔".format(generalizing_word)
         bot.send_message(message.from_user.id, word)
 
-        possible_articles_1 = list(wikipedia.search(generalizing_word))
-        for page in possible_articles_1:
-            print(page)
-
-        number_of_article, text_wiki = 1, "Смогла найти такие статьи 🤗\n"
-        for page in possible_articles_1:
-            text_wiki += "{0} | {1}\n".format(number_of_article, page)
-            number_of_article += 1
-
-        bot.send_message(message.from_user.id, text_wiki)
+        bot.send_message(message.from_user.id, get_article.get_word_is_not_none(generalizing_word))
         msg = bot.send_message(message.from_user.id, "Отправь мне номер статьи, которую хочешь прочитать 🙃")
         bot.register_next_step_handler(msg, find_article_1)
     else:
         global possible_articles_2
-        possible_articles_2 = list(wikipedia.search(generalizing_word_of_user))
 
-        number_of_article, text_wiki = 1, "Вот, что я смогла найти 🤗\n"
-        for page in possible_articles_2:
-            text_wiki += "{0} | {1}\n".format(number_of_article, page)
-            number_of_article += 1
-
-        bot.send_message(message.from_user.id, text_wiki)
+        bot.send_message(message.from_user.id, get_article.get_word_is_none(generalizing_word))
         msg = bot.send_message(message.from_user.id, "Отправь мне номер статьи, которую хочешь прочитать 🙃")
         bot.register_next_step_handler(msg, find_article_2)
 
