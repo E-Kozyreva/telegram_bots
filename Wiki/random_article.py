@@ -2,7 +2,7 @@ import wikipedia
 from random import randint
 from newspaper import Article
 
-# LANGUAGE
+
 language = "ru"
 wikipedia.set_lang(language)
 
@@ -16,11 +16,10 @@ def get_random_article():
 
     python_page = wikipedia.page(title_of_article)
 
-    page_url = python_page.url
-    original_page_title = python_page.original_title
-    page_summary = str(python_page.summary)
+    page_url = python_page.url.replace('\n',"")
+    original_page_title = python_page.original_title.replace('\n',"")
+    page_summary = str(python_page.summary).replace('\n',"")
 
-    text = '''📰 {0}\n\n{1}\n\n🌐 '''.format(original_page_title, page_summary)
-    text += page_url
+    text = '''📰 {0}\n\n{1}\n\n{2}'''.format(original_page_title, page_summary, f'[Подробнее...]({page_url})')
 
     return text
