@@ -21,12 +21,10 @@ def t_get_book(message):
     bot.register_next_step_handler(msg, t_send_book)
 
 
-@bot.message_handler(content_types=['text'])
 def t_send_book(message):
     answer = message.text
     if answer in books.book:
-        msg = bot.send_document(message.chat.id, document=books.book[answer], reply_markup=types.ReplyKeyboardRemove())
-        bot.register_next_step_handler(msg, t_commands)
+        bot.send_document(message.chat.id, document=books.book[answer], reply_markup=types.ReplyKeyboardRemove())
     else:
         msg = bot.send_message(message.chat.id, text="Такого файла нет, попробуй ещё раз 😔", reply_markup=buttons.get_book())
         bot.register_next_step_handler(msg, t_send_book)
